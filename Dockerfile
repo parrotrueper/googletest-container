@@ -61,4 +61,4 @@ WORKDIR /home/gtester
 
 ENV LANG=en_US.UTF-8
 
-
+# docker build -t gtest .
