@@ -1,3 +1,10 @@
+# Docker Image to build this project in a container.
+# Build it like so:
+# $ ./build-container.sh
+#
+# Once the image is build invoke the container with the script
+# $ ./run-container.sh
+#
 FROM ubuntu:focal
 
 USER root
@@ -27,11 +34,14 @@ RUN apt-get update && \
         gcc-multilib \ 
         g++-multilib \
         ninja-build \
-        zstd
+        zstd \
+        curl
 
+# clear out the cache
 RUN apt-get clean
 
-#COPY gtester-launch.sh /usr/bin
+RUN curl https://storage.googleapis.com/git-repo-downloads/repo > /usr/bin/repo
+RUN chmod a+rx /usr/bin/repo
 
 # For ubuntu, do not use dash.
 RUN which dash &> /dev/null && (\
@@ -43,16 +53,12 @@ RUN which dash &> /dev/null && (\
 RUN useradd --create-home --shell /bin/bash gtester && \
     /usr/sbin/locale-gen en_US.UTF-8
 
-# Add the user gtester
-#RUN useradd --create-home --shell /bin/bash gtester && \
-#    usermod -aG sudo gtester && \
-#    /usr/sbin/locale-gen en_US.UTF-8
-
-# New added for disable sudo password
-#RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Set as default user
 USER gtester
 WORKDIR /home/gtester
 
+
 ENV LANG=en_US.UTF-8
+
+
